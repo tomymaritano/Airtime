@@ -7,7 +7,6 @@ struct AISection: View {
     let traffic: AITrafficSnapshot
     let diagnosis: AIDiagnosis
     let quality: SignalQuality?
-    @Binding var selectedApp: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -52,9 +51,7 @@ struct AISection: View {
                             flow: flow,
                             hasBandwidth: traffic.hasBandwidth,
                             share: share(of: flow),
-                            barColor: diagnosis.kind == .saturated ? Theme.load : Theme.secondary,
-                            selected: flow.app == selectedApp,
-                            action: { selectedApp = flow.app }
+                            barColor: diagnosis.kind == .saturated ? Theme.load : Theme.secondary
                         )
                     }
                 }
@@ -92,36 +89,30 @@ private struct AIAppRow: View {
     let hasBandwidth: Bool
     let share: Double
     let barColor: Color
-    let selected: Bool
-    let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                ProviderMark(app: flow.app)
-                    .frame(width: 14, height: 14)
-                    .foregroundStyle(.primary)
-                    .frame(width: 24, height: 24)
-                    .background(Color.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+        HStack(spacing: 10) {
+            ProviderMark(app: flow.app)
+                .frame(width: 14, height: 14)
+                .foregroundStyle(.primary)
+                .frame(width: 24, height: 24)
+                .background(Color.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(flow.app)
-                            .font(.system(size: 13, weight: selected ? .semibold : .regular))
-                        Spacer(minLength: 8)
-                        Text(rate)
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundStyle(Theme.body)
-                            .lineLimit(1)
-                    }
-                    if hasBandwidth {
-                        ShareBar(share: share, color: barColor)
-                    }
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(flow.app)
+                        .font(.system(size: 13, weight: .regular))
+                    Spacer(minLength: 8)
+                    Text(rate)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(Theme.body)
+                        .lineLimit(1)
+                }
+                if hasBandwidth {
+                    ShareBar(share: share, color: barColor)
                 }
             }
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
         .accessibilityLabel("\(flow.app), \(rate)")
     }
 
