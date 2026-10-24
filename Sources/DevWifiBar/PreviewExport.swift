@@ -94,6 +94,13 @@ enum PreviewExport {
     ///
     /// Returns `false` (and leaves no file behind) on any failure, so a broken
     /// render cannot look like a successful export.
+    ///
+    /// Known limitation: `.borderedProminent` buttons (e.g. the Location
+    /// banner's "Allow…") rasterise unemphasized/grey here instead of blue.
+    /// A `canBecomeKey`/`canBecomeMain` window subclass, `makeKeyAndOrderFront`,
+    /// app activation, placing the window on-screen, and delaying the render
+    /// were all tried to make this window key and were reverted — none made
+    /// the button render emphasized. The live app shows it correctly.
     @discardableResult
     private static func write<V: View>(_ view: V, to url: URL, scale: CGFloat) -> Bool {
         let hosting = NSHostingView(rootView: view)
