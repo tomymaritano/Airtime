@@ -22,7 +22,7 @@ brew install --cask devwibar
 Native Swift. No Electron. No Dock icon. Same idea as the [`devwifi`](https://github.com/tomymaritano/devwifi) CLI — always visible, one click deep.
 
 <p align="center">
-  <img src="docs/media/panel.png" width="320" alt="Airtime panel showing signal, traffic, and LLM connection radar">
+  <img src="docs/media/panel.png" width="360" alt="Airtime panel showing signal, traffic, and LLM connection radar">
 </p>
 
 <p align="center">
@@ -33,9 +33,9 @@ Native Swift. No Electron. No Dock icon. Same idea as the [`devwifi`](https://gi
 
 **Menu bar** — a wifi-on-a-bar mark. Template white, native. Click it.
 
-**Signal** — RSSI quality (Excellent / Good / Fair / Weak), channel, radio rate. Same cutoffs as `devwifi`.
+**Signal** — RSSI quality (Excellent / Good / Fair / Weak / Very Weak) on a five-segment meter, channel, radio rate. Same cutoffs as `devwifi`.
 
-**Traffic** — live RX/TX in Mbps, sparkline, session totals.
+**Traffic** — download and upload as two series on one shared scale, blue for download and orange for upload, so the two are comparable at a glance. Session totals below.
 
 **On the link** — LLM Connection Radar. It attributes traffic to AI apps already on your Mac (Cursor, Claude, Grok, ChatGPT, Copilot, Gemini, Windsurf, Ollama, Perplexity) and says whether lag is Wi-Fi or an LLM saturating the uplink.
 
@@ -47,14 +47,24 @@ Evidence is three chips — Ping, Traffic, Signal — plus a one-line reason wit
 
 **Footer** — Open at login, Widgets, Quit.
 
+## Colour
+
+Colour is semantic, not branding. Green means a healthy signal and low ping. Orange means the uplink is loaded or latency is running high. Red means a very weak signal. Blue means download. Fair signal stays uncoloured on purpose — colour means "look at this," and Fair is neither good nor bad.
+
 ## Widgets
 
 Click **Widgets** for a list of switches, same idea as adding Desktop widgets: each row is a different density. Turn it on to put that info in the panel; off to take it out.
 
+<p align="center">
+  <img src="docs/media/widget-signal.png" width="170" alt="Signal widget showing the five-segment meter">
+  <img src="docs/media/widget-radar.png" width="364" alt="On the link widget showing the AI connection radar">
+  <img src="docs/media/widget-traffic.png" width="364" alt="Traffic widget showing download and upload on one shared scale">
+</p>
+
 | Widget | What it adds |
 | --- | --- |
 | Metric | One number: RSSI + quality |
-| Signal | Quality bar, channel, radio |
+| Signal | Five-segment meter, channel, RSSI |
 | History | RX/TX sparkline and totals |
 | Combined | Signal + traffic + ping in one block |
 | Latency | Ping sparkline |
