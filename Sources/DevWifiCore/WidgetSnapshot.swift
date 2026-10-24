@@ -85,6 +85,12 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
         WifiInfo(ssid: ssid, powerOn: powerOn, connected: connected).displayName
     }
 
+    /// `quality` is stored as a String so the Codable shape stays stable across
+    /// versions that share the App Group. Views need the enum.
+    public var signalQuality: SignalQuality? {
+        quality.flatMap(SignalQuality.init(rawValue:))
+    }
+
     public static func make(
         snapshot: NetworkSnapshot,
         downloadHistory: [Double],

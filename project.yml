@@ -39,6 +39,8 @@ targets:
     dependencies:
       - package: DevWifiPackage
         product: DevWifiCore
+      - package: DevWifiPackage
+        product: DevWifiUI
 schemes:
   DevWifiBarWidgets:
     build:

@@ -14,7 +14,9 @@ notary:
 
 widgets:
 	xcodegen generate
-	xcodebuild -project DevWifiBar.xcodeproj -scheme DevWifiBarWidgets -configuration Release -derivedDataPath .build/xcode build
+	xcodebuild -project DevWifiBar.xcodeproj -scheme DevWifiBarWidgets -configuration Release -derivedDataPath .build/xcode \
+		CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CODE_SIGN_STYLE=Manual \
+		build
 
 open: package
 	open dist/Airtime.app

@@ -25,6 +25,9 @@ jobs:
       - name: Generate widget project
         run: xcodegen generate
 
+      - name: Build widget extension
+        run: make widgets
+
       - name: Package app
         run: ./Scripts/package_app.sh
 

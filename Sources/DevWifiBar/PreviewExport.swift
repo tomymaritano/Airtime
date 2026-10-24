@@ -1,4 +1,5 @@
 import AppKit
+import DevWifiUI
 import SwiftUI
 
 @MainActor
@@ -17,14 +18,15 @@ enum PreviewExport {
             .appendingPathComponent("docs/media", isDirectory: true)
     }
 
-    static func run(state: AppState, directory: URL) async {
+    static func run(state: AppState, layout: WidgetLayoutStore, directory: URL) async {
         try? await Task.sleep(for: .seconds(5))
 
         let panel = MenuPanelView()
             .environmentObject(state)
+            .environmentObject(layout)
         write(panel, to: directory.appendingPathComponent("panel.png"), scale: 2)
 
-        let mark = BrandMarkView(color: Theme.teal)
+        let mark = BrandMarkView(color: .white)
             .frame(width: 128, height: 128)
             .padding(24)
             .background(Theme.background)

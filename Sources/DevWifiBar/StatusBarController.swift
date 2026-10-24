@@ -27,6 +27,7 @@ final class StatusBarController: NSObject {
         host.sizingOptions = [.intrinsicContentSize]
         popover.contentViewController = host
         popover.behavior = .transient
+        popover.appearance = NSAppearance(named: .darkAqua)
         popover.animates = true
     }
 

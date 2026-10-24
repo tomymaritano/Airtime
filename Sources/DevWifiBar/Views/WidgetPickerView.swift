@@ -1,109 +1,88 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
+/// Chooses which cards show in the panel. The same cards ship as desktop widgets.
 struct WidgetPickerView: View {
-    @EnvironmentObject private var state: AppState
     @ObservedObject var layout: WidgetLayoutStore
     var onDone: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(ProductName.display)
-                        .font(.system(size: 15, weight: .semibold))
-                    Text("Add or remove info. Each widget is a different density.")
-                        .font(.system(size: 11))
-                        .foregroundStyle(Theme.secondary)
+        VStack(alignment: .leading, spacing: Theme.cardSpacing) {
+            HStack(spacing: 6) {
+                Button(action: onDone) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 13, weight: .semibold))
+                        .frame(width: 28, height: 28)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Back")
+                .keyboardShortcut(.cancelAction)
+
+                Text("Widgets")
+                    .font(.system(size: 15, weight: .semibold))
                 Spacer()
-                Button("OK", action: onDone)
-                    .buttonStyle(.plain)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Theme.teal)
+                Button("Done", action: onDone)
+                    .buttonStyle(.borderless)
+                    .keyboardShortcut(.defaultAction)
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 12)
-            .padding(.bottom, 10)
 
-            Rectangle()
-                .fill(Theme.divider)
-                .frame(height: 1)
+            Text("Choose the cards in this panel.")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.secondary)
+                .padding(.horizontal, 4)
 
-            ScrollView {
-                VStack(spacing: 14) {
-                    ForEach(galleryOrder) { widget in
-                        galleryCard(widget)
+            VStack(spacing: 0) {
+                ForEach(Array(order.enumerated()), id: \.element) { index, widget in
+                    row(widget)
+                    if index < order.count - 1 {
+                        Rectangle().fill(Theme.divider).frame(height: 1)
                     }
                 }
-                .padding(14)
             }
-            .frame(height: 420)
+            .card(padding: 0)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("On the desktop")
+                    .font(.system(size: 13, weight: .semibold))
+                Text("The same cards are desktop and Notification Center widgets: right-click the desktop \u{203A} Edit Widgets \u{203A} \(ProductName.display). macOS refreshes them about every five minutes. On the link fills in after \(ProductName.display) has saved its first snapshot.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color(white: 0.78))
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(Theme.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: Theme.cardRadius, style: .continuous))
         }
+        .padding(Theme.panelPadding)
         .frame(width: Theme.panelWidth)
         .background(Theme.background)
     }
 
-    private var galleryOrder: [PanelWidget] {
+    private var order: [PanelWidget] {
         [.metric, .signal, .traffic, .combined, .latency, .radar, .network]
     }
 
-    private func galleryCard(_ widget: PanelWidget) -> some View {
-        let added = layout.isVisible(widget)
-        return Button {
-            layout.setVisible(widget, visible: !added)
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                preview(widget)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                    .background(Color.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(added ? Theme.teal.opacity(0.7) : Color.white.opacity(0.06), lineWidth: added ? 1.5 : 1)
-                    )
-
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(widget.title)
-                            .font(.system(size: 12, weight: .semibold))
-                        Text(widget.summary)
-                            .font(.system(size: 10))
-                            .foregroundStyle(Theme.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer(minLength: 8)
-                    Text(added ? "Added" : "Add")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(added ? Theme.teal : Theme.secondary)
-                }
+    private func row(_ widget: PanelWidget) -> some View {
+        Toggle(isOn: Binding(
+            get: { layout.isVisible(widget) },
+            set: { layout.setVisible(widget, visible: $0) }
+        )) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(widget.title)
+                    .font(.system(size: 13))
+                Text(widget.summary)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Theme.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(.primary)
-    }
-
-    @ViewBuilder
-    private func preview(_ widget: PanelWidget) -> some View {
-        switch widget {
-        case .metric:
-            MetricSection(wifi: state.snapshot.wifi)
-        case .signal:
-            SignalSection(wifi: state.snapshot.wifi)
-        case .traffic:
-            TrafficSection(
-                snapshot: state.snapshot,
-                downloadHistory: state.downloadHistory,
-                uploadHistory: state.uploadHistory
-            )
-        case .combined:
-            CombinedSection(snapshot: state.snapshot, downloadHistory: state.downloadHistory)
-        case .latency:
-            LatencySection(latencyMs: state.snapshot.latencyMs, history: state.latencyHistory)
-        case .radar:
-            AISection(traffic: state.aiTraffic, diagnosis: state.aiDiagnosis, selectedApp: $state.selectedAIApp)
-        case .network:
-            NetworkSection(snapshot: state.snapshot, copiedField: nil, onCopy: { _, _ in })
-        }
+        .toggleStyle(.switch)
+        .controlSize(.small)
+        .tint(Theme.control)
+        .padding(.horizontal, Theme.cardPadding)
+        .padding(.vertical, 9)
     }
 }

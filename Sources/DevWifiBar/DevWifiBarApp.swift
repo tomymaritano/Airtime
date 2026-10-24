@@ -27,7 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let docs = PreviewExport.outputDirectory()
             try? FileManager.default.createDirectory(at: docs, withIntermediateDirectories: true)
             Task { @MainActor in
-                await PreviewExport.run(state: state, directory: docs)
+                await PreviewExport.run(state: state, layout: layout, directory: docs)
                 NSApp.terminate(nil)
             }
         }

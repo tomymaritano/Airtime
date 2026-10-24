@@ -1,6 +1,8 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
+/// History: download and upload on one scale, current rates, session totals.
 struct TrafficSection: View {
     let snapshot: NetworkSnapshot
     let downloadHistory: [Double]
@@ -8,29 +10,44 @@ struct TrafficSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("History")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(Theme.secondary)
+            HStack(alignment: .firstTextBaseline) {
+                CardTitle(text: "Traffic")
+                Spacer()
+                HStack(spacing: 10) {
+                    Text("\u{2193} \(Format.mbps(snapshot.downloadMbps))")
+                        .foregroundStyle(Theme.down)
+                    Text("\u{2191} \(Format.mbps(snapshot.uploadMbps))")
+                        .foregroundStyle(uploadColor)
+                }
+                .font(.system(size: 12, weight: .semibold).monospacedDigit())
+            }
 
-            SparklineView(values: downloadHistory, color: Theme.teal)
-                .frame(height: 28)
+            ZStack {
+                SparklineView(values: downloadHistory, color: Theme.down, peak: peak)
+                SparklineView(values: uploadHistory, color: Theme.load, peak: peak)
+            }
+            .frame(height: 52)
+            .overlay(alignment: .bottom) {
+                Rectangle().fill(Theme.divider).frame(height: 1)
+            }
 
             HStack {
-                Label(Format.mbps(snapshot.downloadMbps), systemImage: "arrow.down")
+                Text("This session")
+                    .foregroundStyle(Theme.secondary)
                 Spacer()
-                Label(Format.mbps(snapshot.uploadMbps), systemImage: "arrow.up")
+                Text("\u{2193} \(Format.bytes(snapshot.totalRx))   \u{2191} \(Format.bytes(snapshot.totalTx))")
+                    .foregroundStyle(Theme.body)
             }
-            .font(.system(size: 11).monospacedDigit())
-            .labelStyle(.titleAndIcon)
-            .foregroundStyle(.primary)
-
-            HStack {
-                Text("RX \(Format.bytes(snapshot.totalRx))")
-                Spacer()
-                Text("TX \(Format.bytes(snapshot.totalTx))")
-            }
-            .font(.system(size: 11))
-            .foregroundStyle(Theme.secondary)
+            .font(.system(size: 12).monospacedDigit())
         }
+        .card()
+    }
+
+    private var peak: Double {
+        max(downloadHistory.max() ?? 0, uploadHistory.max() ?? 0, AIBrief.saturateMbps)
+    }
+
+    private var uploadColor: Color {
+        Theme.color(forUpload: snapshot.uploadMbps)
     }
 }

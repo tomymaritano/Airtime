@@ -49,7 +49,7 @@ Evidence is three chips — Ping, Traffic, Signal — plus a one-line reason wit
 
 ## Widgets
 
-Click **Widgets** for a gallery, same idea as adding Desktop widgets: each card is a different density. **Add** puts that info in the panel; **Added** takes it out.
+Click **Widgets** for a list of switches, same idea as adding Desktop widgets: each row is a different density. Turn it on to put that info in the panel; off to take it out.
 
 | Widget | What it adds |
 | --- | --- |

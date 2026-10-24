@@ -1,38 +1,31 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
-/// Dense density — signal + traffic + ping in one block.
+/// Dense density: signal, traffic and ping in one row.
 struct CombinedSection: View {
     let snapshot: NetworkSnapshot
     let downloadHistory: [Double]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Combined")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Theme.secondary)
-                Spacer()
-                if let quality = snapshot.wifi.quality {
-                    Text(quality.rawValue)
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(Theme.teal)
-                }
+        HStack(spacing: 8) {
+            HStack(spacing: 6) {
+                StatusDot(color: Theme.color(for: snapshot.wifi.quality))
+                Text(snapshot.wifi.quality?.rawValue ?? "No signal")
             }
-
-            ProgressBar(progress: snapshot.wifi.qualityPercent, color: Theme.teal)
-
-            SparklineView(values: downloadHistory, color: Theme.teal)
-                .frame(height: 22)
-
-            HStack {
-                Text(Format.rssi(snapshot.wifi.rssi))
-                Spacer()
-                Text(Format.mbps(snapshot.downloadMbps))
-                Spacer()
-                Text(Format.latency(snapshot.latencyMs))
-            }
-            .font(.system(size: 11, weight: .medium).monospacedDigit())
+            Spacer(minLength: 4)
+            Text("\u{2193} \(Format.mbps(snapshot.downloadMbps))")
+                .foregroundStyle(Theme.down)
+            Spacer(minLength: 4)
+            Text("\u{2191} \(Format.mbps(snapshot.uploadMbps))")
+                .foregroundStyle(Theme.color(forUpload: snapshot.uploadMbps))
+            Spacer(minLength: 4)
+            Text(Format.latency(snapshot.latencyMs))
+                .foregroundStyle(Theme.color(forLatency: snapshot.latencyMs))
         }
+        .font(.system(size: 12, weight: .medium).monospacedDigit())
+        .lineLimit(1)
+        .card(padding: 10)
+        .accessibilityElement(children: .combine)
     }
 }

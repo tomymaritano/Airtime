@@ -1,30 +1,25 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
-/// Compact density — one number, like CodexBar Metric.
+/// Compact density: one number, the RSSI.
 struct MetricSection: View {
     let wifi: WifiInfo
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("Metric")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Theme.secondary)
-                Spacer()
-                Text(wifi.displayName)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Theme.secondary)
-                    .lineLimit(1)
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 2) {
+                CardTitle(text: "Metric")
+                Text(Format.rssi(wifi.rssi).replacingOccurrences(of: "-", with: "\u{2212}"))
+                    .font(.system(size: 22, weight: .semibold).monospacedDigit())
+                    .foregroundStyle(Theme.color(for: wifi.quality))
             }
-
-            Text(Format.rssi(wifi.rssi))
-                .font(.system(size: 22, weight: .semibold).monospacedDigit())
-                .foregroundStyle(Theme.teal)
-
+            Spacer()
             Text(wifi.quality?.rawValue ?? "No signal")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(Theme.secondary)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Theme.color(for: wifi.quality))
         }
+        .card()
+        .accessibilityElement(children: .combine)
     }
 }
