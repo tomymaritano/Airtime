@@ -10,7 +10,7 @@ struct WidgetPickerView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("DevWifiBar")
+                    Text(ProductName.display)
                         .font(.system(size: 15, weight: .semibold))
                     Text("Add or remove info. Each widget is a different density.")
                         .font(.system(size: 11))

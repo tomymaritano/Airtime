@@ -8,7 +8,7 @@ struct SignalWidget: Widget {
             SignalWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Signal")
+        .configurationDisplayName("\(ProductName.display) Signal")
         .description("Quality bar, RSSI, and channel.")
         .supportedFamilies([.systemSmall])
     }

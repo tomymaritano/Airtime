@@ -1,3 +1,4 @@
+import DevWifiCore
 import SwiftUI
 
 struct FooterView: View {
@@ -17,7 +18,7 @@ struct FooterView: View {
             .font(.system(size: 11))
             .disabled(!canManageLogin)
             .help(canManageLogin
-                ? "Start DevWifiBar when you log in. AI radar uses process names and destinations only."
+                ? "Start \(ProductName.display) when you log in. AI radar uses process names and destinations only."
                 : "Available after installing the .app")
 
             Spacer()

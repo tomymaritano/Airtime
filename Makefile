@@ -17,4 +17,4 @@ widgets:
 	xcodebuild -project DevWifiBar.xcodeproj -scheme DevWifiBarWidgets -configuration Release -derivedDataPath .build/xcode build
 
 open: package
-	open dist/DevWifiBar.app
+	open dist/Airtime.app

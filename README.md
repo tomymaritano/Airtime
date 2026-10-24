@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/media/mark.png" width="96" alt="DevWifiBar mark">
+  <img src="docs/media/mark.png" width="96" alt="Airtime mark">
 </p>
 
-<h1 align="center">DevWifiBar</h1>
+<h1 align="center">Airtime</h1>
 
 <p align="center">
   Live Wi-Fi in the macOS menu bar. When an LLM fills the pipe, you’ll know why the ping moved.
@@ -22,11 +22,11 @@ brew install --cask devwibar
 Native Swift. No Electron. No Dock icon. Same idea as the [`devwifi`](https://github.com/tomymaritano/devwifi) CLI — always visible, one click deep.
 
 <p align="center">
-  <img src="docs/media/panel.png" width="320" alt="DevWifiBar panel showing signal, traffic, and LLM connection radar">
+  <img src="docs/media/panel.png" width="320" alt="Airtime panel showing signal, traffic, and LLM connection radar">
 </p>
 
 <p align="center">
-  <img src="docs/media/menubar.png" width="420" alt="DevWifiBar in the macOS menu bar">
+  <img src="docs/media/menubar.png" width="420" alt="Airtime in the macOS menu bar">
 </p>
 
 ## What you get
@@ -63,9 +63,9 @@ Click **Widgets** for a gallery, same idea as adding Desktop widgets: each card 
 
 The same templates appear in the macOS widget gallery (Desktop / Notification Center) when the `.appex` is embedded.
 
-macOS: right-click the desktop or open Notification Center → Edit Widgets → DevWifiBar.
+macOS: right-click the desktop or open Notification Center → Edit Widgets → Airtime.
 
-System widgets refresh about every five minutes. Radar only appears after DevWifiBar has written a snapshot (it will not run `lsof` inside the widget sandbox). If the gallery is empty, build with full Xcode so `package_app.sh` can embed `DevWifiBarWidgets.appex`.
+System widgets refresh about every five minutes. Radar only appears after Airtime has written a snapshot (it will not run `lsof` inside the widget sandbox). If the gallery is empty, build with full Xcode so `package_app.sh` can embed `DevWifiBarWidgets.appex`.
 
 Homebrew ships v0.2.1 (Developer ID signed and notarized). Upgrade with `brew upgrade --cask devwibar`.
 
@@ -79,7 +79,7 @@ brew install --cask devwibar
 open -a DevWifiBar
 ```
 
-The cask lives in [`tomymaritano/homebrew-tap`](https://github.com/tomymaritano/homebrew-tap). Upgrade with `brew upgrade --cask devwibar`.
+The cask lives in [`tomymaritano/homebrew-tap`](https://github.com/tomymaritano/homebrew-tap). Upgrade with `brew upgrade --cask devwibar`. v0.2.1 on the tap is still `DevWifiBar.app`. The next release installs as Airtime.
 
 Releases are Developer ID signed and notarized. Gatekeeper opens them without right-click → Open.
 
@@ -91,7 +91,7 @@ macOS 14+ and Swift 5.10+ (Xcode 15.4 or later).
 git clone https://github.com/tomymaritano/devwibar.git
 cd devwibar
 ./Scripts/package_app.sh
-open dist/DevWifiBar.app
+open dist/Airtime.app
 ```
 
 `make package` is the same. `UNIVERSAL=1 make package` builds arm64 + x86_64.
@@ -103,7 +103,7 @@ open dist/DevWifiBar.app
 | **Location** | Apple only exposes SSID / BSSID through CoreWLAN + CoreLocation. Asked once. Without it the panel still shows RSSI, IP, traffic, DNS, and latency; the name stays “Wi-Fi”. |
 | **lsof / nettop** | Radar maps process names to known LLM hosts. No packet payloads, no keychain, no prompts. |
 
-System Settings → Privacy & Security → Location Services → DevWifiBar.
+System Settings → Privacy & Security → Location Services → Airtime.
 
 ## How it works
 
@@ -130,7 +130,7 @@ make package
 make widgets          # XcodeGen + WidgetKit extension (full Xcode)
 ```
 
-GitHub Actions (`macos-14`) runs tests and an ad-hoc package on every push to `main`. A tag `vX.Y.Z` (or **Release** → Run workflow) signs with Developer ID, notarizes, and attaches `DevWifiBar-X.Y.Z.zip` to the GitHub Release.
+GitHub Actions (`macos-14`) runs tests and an ad-hoc package on every push to `main`. A tag `vX.Y.Z` (or **Release** → Run workflow) signs with Developer ID, notarizes, and attaches `Airtime-X.Y.Z.zip` to the GitHub Release.
 
 ## Phase 2
 

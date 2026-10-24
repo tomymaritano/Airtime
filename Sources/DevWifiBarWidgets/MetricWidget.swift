@@ -8,7 +8,7 @@ struct MetricWidget: Widget {
             MetricWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Metric")
+        .configurationDisplayName("\(ProductName.display) Metric")
         .description("One number: quality and RSSI.")
         .supportedFamilies([.systemSmall])
     }

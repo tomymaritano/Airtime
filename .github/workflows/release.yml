@@ -70,12 +70,12 @@ jobs:
           VERSION: ${{ steps.ver.outputs.version }}
         run: |
           set -euo pipefail
-          zip="dist/DevWifiBar-${VERSION}.zip"
+          zip="dist/Airtime-${VERSION}.zip"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$zip" --clobber
             gh release edit "$TAG" --draft=false
           else
-            gh release create "$TAG" "$zip" --title "DevWifiBar ${VERSION}" --generate-notes
+            gh release create "$TAG" "$zip" --title "Airtime ${VERSION}" --generate-notes
           fi
 
       - name: Upload artifacts
