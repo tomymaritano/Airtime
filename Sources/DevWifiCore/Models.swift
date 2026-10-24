@@ -28,6 +28,11 @@ public struct DNSServer: Equatable, Sendable, Identifiable {
             return "Custom"
         }
     }
+
+    /// Panel and widget share this row. A custom resolver stays the address alone.
+    public var line: String {
+        provider == "Custom" ? address : "\(address) · \(provider)"
+    }
 }
 
 public struct WifiInfo: Equatable, Sendable {

@@ -32,7 +32,7 @@ final class StatusBarController: NSObject {
     private func configureStatusItem() {
         statusItem.isVisible = true
         guard let button = statusItem.button else { return }
-        button.image = BrandMark.menuBarImage(for: state.snapshot, aiActive: state.aiTraffic.activeCount > 0)
+        button.image = BrandMark.menuBarImage(for: state.snapshot)
         button.imagePosition = .imageOnly
         button.imageScaling = .scaleProportionallyDown
         button.toolTip = "DevWifiBar"
@@ -46,7 +46,7 @@ final class StatusBarController: NSObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] snapshot, traffic in
                 guard let button = self?.statusItem.button else { return }
-                button.image = BrandMark.menuBarImage(for: snapshot, aiActive: traffic.activeCount > 0)
+                button.image = BrandMark.menuBarImage(for: snapshot)
                 button.toolTip = traffic.activeCount > 0
                     ? "DevWifiBar · \(traffic.activeCount) AI on link"
                     : "DevWifiBar"

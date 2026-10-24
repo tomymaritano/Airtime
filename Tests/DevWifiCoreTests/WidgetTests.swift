@@ -34,7 +34,7 @@ final class WidgetSnapshotTests: XCTestCase {
             latencyHistory: [20, 24],
             diagnosisTitle: "Saturated",
             diagnosisReason: "Cursor is filling the pipe.",
-            diagnosisKind: "saturated",
+            diagnosisKind: .saturated,
             topApp: "Cursor",
             topAppHost: "api2.cursor.sh",
             updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
@@ -53,6 +53,7 @@ final class WidgetSnapshotTests: XCTestCase {
         var snapshot = NetworkSnapshot.empty
         snapshot.wifi = WifiInfo(ssid: "Home", rssi: -55, channel: 11, powerOn: true, connected: true)
         snapshot.localIP = "192.168.1.4"
+        snapshot.dns = [DNSServer(address: "1.1.1.1"), DNSServer(address: "10.0.0.1")]
         snapshot.latencyMs = 18
         snapshot.downloadMbps = 4
         let diagnosis = AIDiagnosis(kind: .live, title: "Live", reason: "Cursor is on the link.")
@@ -70,21 +71,23 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertEqual(widget.ssid, "Home")
         XCTAssertEqual(widget.quality, "Good")
         XCTAssertEqual(widget.topApp, "Cursor")
-        XCTAssertEqual(widget.diagnosisKind, "live")
+        XCTAssertEqual(widget.diagnosisKind, .live)
+        XCTAssertEqual(widget.dns, "1.1.1.1 · Cloudflare")
+        XCTAssertEqual(widget.displayName, snapshot.wifi.displayName)
         XCTAssertEqual(widget.latencyHistory, [18])
     }
 
     func testMergeKeepsRadarFromStored() {
         let stored = WidgetSnapshot(
             diagnosisTitle: "Uplink lag",
-            diagnosisKind: "uplinkLag",
+            diagnosisKind: .uplinkLag,
             topApp: "Grok",
             updatedAt: Date(timeIntervalSince1970: 10)
         )
         let live = WidgetSnapshot(rssi: -42, quality: "Excellent", qualityPercent: 0.8, powerOn: true, connected: true, localIP: "10.0.0.2", updatedAt: Date(timeIntervalSince1970: 20))
         let merged = stored.merging(live: live)
         XCTAssertEqual(merged.topApp, "Grok")
-        XCTAssertEqual(merged.diagnosisKind, "uplinkLag")
+        XCTAssertEqual(merged.diagnosisKind, .uplinkLag)
         XCTAssertEqual(merged.rssi, -42)
         XCTAssertEqual(merged.localIP, "10.0.0.2")
     }

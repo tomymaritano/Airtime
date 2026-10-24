@@ -22,17 +22,4 @@ final class SignalTests: XCTestCase {
         XCTAssertEqual(rssiToPercent(-10), 1, accuracy: 0.001)
         XCTAssertEqual(rssiToPercent(-120), 0, accuracy: 0.001)
     }
-
-    func testPercentToDbmMatchesDevwifi() {
-        XCTAssertEqual(percentToDbm(100), -50)
-        XCTAssertEqual(percentToDbm(0), -100)
-    }
-
-    func testBarLevel() {
-        XCTAssertEqual(SignalQuality.excellent.barLevel, 3)
-        XCTAssertEqual(SignalQuality.good.barLevel, 2)
-        XCTAssertEqual(SignalQuality.fair.barLevel, 1)
-        XCTAssertEqual(SignalQuality.weak.barLevel, 0)
-        XCTAssertEqual(SignalQuality.veryWeak.barLevel, 0)
-    }
 }

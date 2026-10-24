@@ -4,6 +4,8 @@ options:
     macOS: "14.0"
   createIntermediateGroups: true
   defaultConfig: Release
+  # macos-14 CI ships Xcode 15.4. Unpinned XcodeGen writes objectVersion 77, which that Xcode will not open.
+  projectFormat: xcode15_3
 packages:
   DevWifiPackage:
     path: .

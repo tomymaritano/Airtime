@@ -14,25 +14,10 @@ public enum SignalQuality: String, Sendable, Equatable, CaseIterable {
         if dbm >= -80 { return .weak }
         return .veryWeak
     }
-
-    /// Menu-bar bar count from 0 (none) to 3 (full).
-    public var barLevel: Int {
-        switch self {
-        case .excellent: return 3
-        case .good: return 2
-        case .fair: return 1
-        case .weak, .veryWeak: return 0
-        }
-    }
 }
 
 /// Map RSSI to 0...1. −30 dBm is 100%, −90 dBm is 0%.
 public func rssiToPercent(_ dbm: Int) -> Double {
     let clamped = min(max(dbm, -90), -30)
     return Double(clamped + 90) / 60.0
-}
-
-/// Inverse of `rssiToPercent`, matching `devwifi`'s `percentToDbm`.
-public func percentToDbm(_ percent: Double) -> Int {
-    Int(((percent / 2.0) - 100.0).rounded())
 }

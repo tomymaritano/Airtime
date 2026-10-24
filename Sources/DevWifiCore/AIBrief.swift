@@ -9,6 +9,8 @@ public struct AIBriefContext: Equatable, Sendable {
     public var uploadMbps: Double
     public var downloadRising: Bool
     public var traffic: AITrafficSnapshot
+    /// False when the link probe did not exit. Defaults to true so a caller that only has traffic still means "this list is the answer".
+    public var probeFinished: Bool
 
     public init(
         quality: SignalQuality? = nil,
@@ -18,7 +20,8 @@ public struct AIBriefContext: Equatable, Sendable {
         downloadMbps: Double = 0,
         uploadMbps: Double = 0,
         downloadRising: Bool = false,
-        traffic: AITrafficSnapshot = .empty
+        traffic: AITrafficSnapshot = .empty,
+        probeFinished: Bool = true
     ) {
         self.quality = quality
         self.powerOn = powerOn
@@ -28,21 +31,16 @@ public struct AIBriefContext: Equatable, Sendable {
         self.uploadMbps = uploadMbps
         self.downloadRising = downloadRising
         self.traffic = traffic
+        self.probeFinished = probeFinished
     }
 
     public var throughputMbps: Double { downloadMbps + uploadMbps }
-
-    public var facts: String {
-        let apps = traffic.flows.map(\.app).joined(separator: ",")
-        let qualityLabel = quality?.rawValue ?? "unknown"
-        let latency = latencyMs.map { String(format: "%.0f", $0) } ?? "na"
-        return "apps=\(apps.isEmpty ? "none" : apps) download=\(String(format: "%.2f", downloadMbps))Mbps upload=\(String(format: "%.2f", uploadMbps))Mbps latency=\(latency)ms quality=\(qualityLabel) rising=\(downloadRising)"
-    }
 }
 
-public enum AIDiagnosisKind: String, Sendable, Equatable {
+public enum AIDiagnosisKind: String, Sendable, Equatable, Codable {
     case offline
     case disconnected
+    case unreadable
     case idle
     case live
     case streaming
@@ -106,6 +104,16 @@ public enum AIBrief {
         if !context.connected {
             return AIDiagnosis(kind: .disconnected, title: "Disconnected", reason: "AI apps cannot reach the network.", evidence: evidence)
         }
+        // An empty finished reading means nothing matched. A probe that did not exit
+        // was killed or never started, and must not be reported as a quiet link.
+        if !context.probeFinished {
+            return AIDiagnosis(
+                kind: .unreadable,
+                title: "Couldn't read the link",
+                reason: "lsof did not answer, so this is not an empty link.",
+                evidence: evidence
+            )
+        }
         if context.traffic.flows.isEmpty {
             return AIDiagnosis(kind: .idle, title: "Quiet", reason: "No AI apps on the link.", evidence: evidence)
         }
@@ -158,23 +166,12 @@ public enum AIBrief {
         )
     }
 
-    public static func ruleBased(_ context: AIBriefContext) -> String {
-        diagnose(context).reason
-    }
-
     public static func isDownloadRising(current: Double, history: [Double]) -> Bool {
         if current >= 5 { return true }
         let prior = Array(history.dropLast().suffix(5))
         guard !prior.isEmpty else { return current >= streamMbps }
         let average = prior.reduce(0, +) / Double(prior.count)
         return current >= streamMbps && current > average * 1.4
-    }
-
-    public static func cacheKey(_ context: AIBriefContext) -> String {
-        let apps = context.traffic.flows.map(\.app).sorted().joined(separator: ",")
-        let latencyBucket = Int(((context.latencyMs ?? 0) / 20).rounded() * 20)
-        let downBucket = Int(context.downloadMbps.rounded())
-        return "\(apps)|\(downBucket)|\(latencyBucket)|\(context.quality?.rawValue ?? "-")|\(context.downloadRising)"
     }
 
     public static func evidenceRow(_ context: AIBriefContext) -> [AIEvidence] {

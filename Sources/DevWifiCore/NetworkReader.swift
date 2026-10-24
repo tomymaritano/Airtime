@@ -17,7 +17,7 @@ public struct NetworkReader: Sendable {
 
     public func localIP(interfaceName: String) -> String {
         #if os(macOS)
-        let fromConfig = Shell.run("/usr/sbin/ipconfig", ["getifaddr", interfaceName])
+        let fromConfig = Shell.run("/usr/sbin/ipconfig", ["getifaddr", interfaceName]).text
         if !fromConfig.isEmpty, fromConfig.contains(".") {
             return fromConfig
         }
@@ -27,7 +27,7 @@ public struct NetworkReader: Sendable {
 
     public func gateway() -> String {
         #if os(macOS)
-        let output = Shell.run("/sbin/route", ["-n", "get", "default"])
+        let output = Shell.run("/sbin/route", ["-n", "get", "default"]).text
         for line in output.split(separator: "\n") {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("gateway:") {

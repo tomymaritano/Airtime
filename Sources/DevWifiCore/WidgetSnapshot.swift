@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+private let widgetSnapshotLog = Logger(subsystem: "com.tomymaritano.devwibar", category: "widget-snapshot")
 
 public struct WidgetSnapshot: Equatable, Sendable, Codable {
     public var ssid: String?
@@ -19,7 +22,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
     public var latencyHistory: [Double]
     public var diagnosisTitle: String
     public var diagnosisReason: String
-    public var diagnosisKind: String
+    public var diagnosisKind: AIDiagnosisKind
     public var topApp: String?
     public var topAppHost: String?
     public var updatedAt: Date
@@ -43,7 +46,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
         latencyHistory: [Double] = [],
         diagnosisTitle: String = "Quiet",
         diagnosisReason: String = "Open DevWifiBar",
-        diagnosisKind: String = "idle",
+        diagnosisKind: AIDiagnosisKind = .idle,
         topApp: String? = nil,
         topAppHost: String? = nil,
         updatedAt: Date = Date(timeIntervalSince1970: 0)
@@ -79,9 +82,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
     }
 
     public var displayName: String {
-        if !powerOn { return "Wi-Fi Off" }
-        if !connected { return "Disconnected" }
-        return ssid ?? "Wi-Fi"
+        WifiInfo(ssid: ssid, powerOn: powerOn, connected: connected).displayName
     }
 
     public static func make(
@@ -92,10 +93,6 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
         diagnosis: AIDiagnosis,
         topFlow: AIFlow?
     ) -> WidgetSnapshot {
-        let dns = snapshot.dns.first.map { first in
-            first.provider == "Custom" ? first.address : "\(first.address) · \(first.provider)"
-        } ?? ""
-
         return WidgetSnapshot(
             ssid: snapshot.wifi.ssid,
             rssi: snapshot.wifi.rssi,
@@ -106,7 +103,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
             connected: snapshot.wifi.connected,
             localIP: snapshot.localIP,
             gateway: snapshot.gateway,
-            dns: dns,
+            dns: snapshot.dns.first?.line ?? "",
             latencyMs: snapshot.latencyMs,
             downloadMbps: snapshot.downloadMbps,
             uploadMbps: snapshot.uploadMbps,
@@ -115,7 +112,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
             latencyHistory: latencyHistory,
             diagnosisTitle: diagnosis.title,
             diagnosisReason: diagnosis.reason,
-            diagnosisKind: diagnosis.kind.rawValue,
+            diagnosisKind: diagnosis.kind,
             topApp: topFlow?.app,
             topAppHost: topFlow?.host,
             updatedAt: snapshot.updatedAt
@@ -154,10 +151,22 @@ public enum WidgetSnapshotStore {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.sortedKeys]
-        guard let data = try? encoder.encode(snapshot) else { return }
-        for url in writableURLs() {
-            try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try? data.write(to: url, options: .atomic)
+        guard let data = try? encoder.encode(snapshot) else {
+            widgetSnapshotLog.error("Widget snapshot did not encode")
+            return
+        }
+        let urls = writableURLs()
+        if urls.isEmpty {
+            widgetSnapshotLog.error("Widget snapshot has nowhere to write")
+            return
+        }
+        for url in urls {
+            do {
+                try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try data.write(to: url, options: .atomic)
+            } catch {
+                widgetSnapshotLog.error("Widget snapshot was not written to \(url.lastPathComponent, privacy: .public): \(String(describing: error), privacy: .public)")
+            }
         }
     }
 
@@ -205,10 +214,6 @@ public enum WidgetSnapshotSampler {
     public static func live() -> WidgetSnapshot {
         let wifi = WifiReader().read()
         let net = NetworkReader().read(interfaceName: wifi.interfaceName)
-        let dns = net.dns.first.map { first in
-            first.provider == "Custom" ? first.address : "\(first.address) · \(first.provider)"
-        } ?? ""
-
         return WidgetSnapshot(
             ssid: wifi.ssid,
             rssi: wifi.rssi,
@@ -219,7 +224,7 @@ public enum WidgetSnapshotSampler {
             connected: wifi.connected,
             localIP: net.localIP,
             gateway: net.gateway,
-            dns: dns,
+            dns: net.dns.first?.line ?? "",
             updatedAt: Date()
         )
     }

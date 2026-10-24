@@ -43,4 +43,9 @@ final class FormatTests: XCTestCase {
         XCTAssertEqual(DNSServer.provider(for: "208.67.222.222"), "OpenDNS")
         XCTAssertEqual(DNSServer.provider(for: "192.168.1.1"), "Custom")
     }
+
+    func testDNSLine() {
+        XCTAssertEqual(DNSServer(address: "1.1.1.1").line, "1.1.1.1 · Cloudflare")
+        XCTAssertEqual(DNSServer(address: "192.168.1.1").line, "192.168.1.1")
+    }
 }

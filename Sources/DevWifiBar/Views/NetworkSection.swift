@@ -20,11 +20,8 @@ struct NetworkSection: View {
     }
 
     private var dnsText: String {
-        guard let first = snapshot.dns.first else { return "—" }
-        if first.provider == "Custom" {
-            return first.address
-        }
-        return "\(first.address) · \(first.provider)"
+        guard let line = snapshot.dns.first?.line, !line.isEmpty else { return "—" }
+        return line
     }
 
     private func display(_ value: String) -> String {
