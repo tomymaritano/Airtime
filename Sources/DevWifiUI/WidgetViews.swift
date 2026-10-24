@@ -113,7 +113,7 @@ public struct LatencyWidgetView: View {
 /// (the real `TrafficWidget`, or the docs export) decides.
 public struct TrafficWidgetView: View {
     let snapshot: WidgetSnapshot
-    public var isCompact: Bool
+    public let isCompact: Bool
 
     public init(snapshot: WidgetSnapshot, isCompact: Bool) {
         self.snapshot = snapshot

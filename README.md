@@ -49,7 +49,7 @@ Evidence is three chips — Ping, Traffic, Signal — plus a one-line reason wit
 
 ## Colour
 
-Colour is semantic, not branding. Green means a healthy signal and low ping. Orange means the uplink is loaded or latency is running high. Red means a very weak signal. Blue means download. Fair signal stays uncoloured on purpose — colour means "look at this," and Fair is neither good nor bad.
+Colour is semantic, not branding. Green means a healthy signal and low ping. Orange means a weak signal, the uplink is loaded, or latency is running high. Red means a very weak signal. Blue means download. Fair signal stays uncoloured on purpose — colour means "look at this," and Fair is neither good nor bad.
 
 ## Widgets
 
