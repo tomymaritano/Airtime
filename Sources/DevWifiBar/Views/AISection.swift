@@ -126,7 +126,9 @@ private struct AIAppRow: View {
     }
 
     private var rate: String {
-        guard hasBandwidth, flow.uploadMbps != nil || flow.downloadMbps != nil else { return flow.detail }
+        guard hasBandwidth, flow.uploadMbps != nil || flow.downloadMbps != nil else {
+            return flow.detail == flow.app ? "" : flow.detail
+        }
         let up = String(format: "%.1f", flow.uploadMbps ?? 0)
         let down = String(format: "%.1f", flow.downloadMbps ?? 0)
         return "\(up) \u{2191}  \(down) \u{2193}"

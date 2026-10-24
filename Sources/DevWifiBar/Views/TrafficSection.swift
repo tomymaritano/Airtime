@@ -44,7 +44,7 @@ struct TrafficSection: View {
     }
 
     private var peak: Double {
-        max(downloadHistory.max() ?? 0, uploadHistory.max() ?? 0, 0.001)
+        max(downloadHistory.max() ?? 0, uploadHistory.max() ?? 0, AIBrief.saturateMbps)
     }
 
     private var uploadColor: Color {
