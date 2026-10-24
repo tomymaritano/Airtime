@@ -11,7 +11,7 @@ struct HeaderView: View {
                 .padding(.top, 1)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("DevWifiBar")
+                Text(ProductName.display)
                     .font(.system(size: 15, weight: .semibold))
                 Text(updatedText)
                     .font(.system(size: 11))

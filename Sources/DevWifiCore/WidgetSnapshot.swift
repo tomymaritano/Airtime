@@ -45,7 +45,7 @@ public struct WidgetSnapshot: Equatable, Sendable, Codable {
         uploadHistory: [Double] = [],
         latencyHistory: [Double] = [],
         diagnosisTitle: String = "Quiet",
-        diagnosisReason: String = "Open DevWifiBar",
+        diagnosisReason: String = ProductName.openPrompt,
         diagnosisKind: AIDiagnosisKind = .idle,
         topApp: String? = nil,
         topAppHost: String? = nil,
@@ -204,7 +204,7 @@ public enum WidgetSnapshotStore {
             urls.append(group.appendingPathComponent(fileName))
         }
         if let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            urls.append(support.appendingPathComponent("DevWifiBar", isDirectory: true).appendingPathComponent(fileName))
+            urls.append(support.appendingPathComponent(ProductName.display, isDirectory: true).appendingPathComponent(fileName))
         }
         return urls
     }

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>DevWifiBar</string>
+	<string>Airtime</string>
 	<key>CFBundleExecutable</key>
 	<string>DevWifiBar</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>DevWifiBar</string>
+	<string>Airtime</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundlePackageType</key>
@@ -29,8 +29,8 @@
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSLocationUsageDescription</key>
-	<string>DevWifiBar needs Location access to read your current Wi-Fi network name (SSID). Signal, IP, and traffic still work without it.</string>
+	<string>Airtime needs Location access to read your current Wi-Fi network name (SSID). Signal, IP, and traffic still work without it.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>DevWifiBar needs Location access to read your current Wi-Fi network name (SSID). Signal, IP, and traffic still work without it.</string>
+	<string>Airtime needs Location access to read your current Wi-Fi network name (SSID). Signal, IP, and traffic still work without it.</string>
 </dict>
 </plist>

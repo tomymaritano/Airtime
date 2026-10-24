@@ -8,7 +8,7 @@ struct TrafficWidget: Widget {
             TrafficWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar History")
+        .configurationDisplayName("\(ProductName.display) History")
         .description("RX/TX sparkline with session totals.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
