@@ -28,6 +28,7 @@ final class AppState: ObservableObject {
     private var lastProcessBytes: [String: ProcessByteCounters] = [:]
     private var lastProcessBytesAt: Date?
     private var aiRefreshInFlight = false
+    private var probeFinished = true
     private var pathSatisfied = false
     private var tickCount = 0
     private let historyLimit = 30
@@ -158,6 +159,7 @@ final class AppState: ObservableObject {
             let sample = reader.sample(previousBytes: previous, elapsed: elapsed)
             await MainActor.run { [weak self] in
                 let state = self
+                state?.probeFinished = sample.probeFinished
                 state?.aiTraffic = sample.traffic
                 state?.syncSelectedAIApp()
                 if !sample.totals.isEmpty {
@@ -206,7 +208,8 @@ final class AppState: ObservableObject {
             downloadMbps: snapshot.downloadMbps,
             uploadMbps: snapshot.uploadMbps,
             downloadRising: AIBrief.isDownloadRising(current: snapshot.downloadMbps, history: downloadHistory),
-            traffic: aiTraffic
+            traffic: aiTraffic,
+            probeFinished: probeFinished
         )
     }
 

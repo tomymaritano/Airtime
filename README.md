@@ -119,7 +119,7 @@ System Settings → Privacy & Security → Location Services → DevWifiBar.
 
 `DevWifiCore` is the readers and the widget snapshot. `DevWifiBar` is an `LSUIElement` AppKit status item + SwiftUI popover. `DevWifiBarWidgets` is the WidgetKit extension.
 
-Radar rules (with hysteresis): latency is high above **80 ms** and clears below **60 ms**; saturate above **2.5 Mbps** and clears below **1.6 Mbps**. If ping is high and signal is Excellent, the verdict is uplink / LLM host — not RSSI.
+Radar rules (with hysteresis): latency is high above **80 ms** and clears below **60 ms**; saturate above **2.5 Mbps** and clears below **1.6 Mbps**. If ping is high and signal is Excellent, the verdict is uplink / LLM host — not RSSI. If `lsof` does not exit, the verdict is that the link could not be read. An empty answer is Quiet.
 
 ## Development
 

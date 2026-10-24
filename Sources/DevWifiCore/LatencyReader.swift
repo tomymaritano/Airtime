@@ -12,10 +12,11 @@ public struct LatencyReader: Sendable {
     static func ping(host: String) -> Double? {
         #if os(macOS)
         let output = Shell.run("/sbin/ping", ["-c", "1", "-W", "2000", host])
-        guard let match = output.range(of: #"time[=<]([0-9.]+)\s*ms"#, options: .regularExpression) else {
+        guard output.finished else { return nil }
+        guard let match = output.text.range(of: #"time[=<]([0-9.]+)\s*ms"#, options: .regularExpression) else {
             return nil
         }
-        let token = output[match]
+        let token = output.text[match]
         let number = token
             .replacingOccurrences(of: "time=", with: "")
             .replacingOccurrences(of: "time<", with: "")

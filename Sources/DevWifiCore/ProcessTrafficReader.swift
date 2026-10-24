@@ -1,8 +1,25 @@
 import Foundation
 
+public struct ProcessTrafficSample: Equatable, Sendable {
+    public var traffic: AITrafficSnapshot
+    public var totals: [String: ProcessByteCounters]
+    /// False when `lsof` did not exit. An empty finished listing stays true.
+    public var probeFinished: Bool
+
+    public init(
+        traffic: AITrafficSnapshot,
+        totals: [String: ProcessByteCounters],
+        probeFinished: Bool
+    ) {
+        self.traffic = traffic
+        self.totals = totals
+        self.probeFinished = probeFinished
+    }
+}
+
 public struct ProcessTrafficReader: Sendable {
-    public var lsofOutput: @Sendable () -> String
-    public var nettopOutput: @Sendable () -> String
+    public var lsofOutput: @Sendable () -> CommandOutput
+    public var nettopOutput: @Sendable () -> CommandOutput
 
     public init() {
         self.lsofOutput = {
@@ -14,8 +31,8 @@ public struct ProcessTrafficReader: Sendable {
     }
 
     public init(
-        lsofOutput: @escaping @Sendable () -> String,
-        nettopOutput: @escaping @Sendable () -> String
+        lsofOutput: @escaping @Sendable () -> CommandOutput,
+        nettopOutput: @escaping @Sendable () -> CommandOutput
     ) {
         self.lsofOutput = lsofOutput
         self.nettopOutput = nettopOutput
@@ -25,17 +42,27 @@ public struct ProcessTrafficReader: Sendable {
         previousBytes: [String: ProcessByteCounters] = [:],
         elapsed: TimeInterval = 0,
         now: Date = Date()
-    ) -> (traffic: AITrafficSnapshot, totals: [String: ProcessByteCounters]) {
-        let connections = Self.parseLsof(lsofOutput())
-        let processes = Self.parseNettop(nettopOutput())
+    ) -> ProcessTrafficSample {
+        let lsof = lsofOutput()
+        guard lsof.finished else {
+            return ProcessTrafficSample(
+                traffic: AITrafficSnapshot(flows: [], updatedAt: now, hasBandwidth: false),
+                totals: [:],
+                probeFinished: false
+            )
+        }
+
+        let nettop = nettopOutput()
+        let processes = nettop.finished ? Self.parseNettop(nettop.text) : []
         let traffic = Self.assemble(
-            connections: connections,
+            connections: Self.parseLsof(lsof.text),
             processes: processes,
-            previousBytes: previousBytes,
-            elapsed: elapsed,
+            previousBytes: nettop.finished ? previousBytes : [:],
+            elapsed: nettop.finished ? elapsed : 0,
             now: now
         )
-        return (traffic, Self.byteTotals(from: processes))
+        let totals = nettop.finished ? Self.byteTotals(from: processes) : [:]
+        return ProcessTrafficSample(traffic: traffic, totals: totals, probeFinished: true)
     }
 
     public func read(

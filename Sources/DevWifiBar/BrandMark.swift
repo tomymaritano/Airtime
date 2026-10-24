@@ -6,7 +6,7 @@ import SwiftUI
 enum BrandMark {
     static let menuBarPointSize: CGFloat = 18
 
-    static func menuBarImage(for snapshot: NetworkSnapshot, aiActive: Bool = false) -> NSImage {
+    static func menuBarImage(for snapshot: NetworkSnapshot) -> NSImage {
         let size = NSSize(width: menuBarPointSize, height: menuBarPointSize)
         let image = NSImage(size: size, flipped: true) { rect in
             let alpha: CGFloat = snapshot.wifi.powerOn ? 1 : 0.35
@@ -15,9 +15,6 @@ enum BrandMark {
             return true
         }
         image.isTemplate = true
-        if aiActive {
-            image.isTemplate = true
-        }
         return image
     }
 

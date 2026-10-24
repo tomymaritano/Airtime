@@ -133,24 +133,58 @@ final class ProcessTrafficParserTests: XCTestCase {
 
     func testReaderUsesInjectedOutput() {
         let reader = ProcessTrafficReader(
-            lsofOutput: { "p1\ncClaude\nn10.0.0.1:1->api.anthropic.com:443" },
-            nettopOutput: { ",bytes_in,bytes_out,\nClaude.1,100,20," }
+            lsofOutput: { .finished("p1\ncClaude\nn10.0.0.1:1->api.anthropic.com:443") },
+            nettopOutput: { .finished(",bytes_in,bytes_out,\nClaude.1,100,20,") }
         )
-        let traffic = reader.read()
-        XCTAssertEqual(traffic.activeCount, 1)
-        XCTAssertEqual(traffic.primaryApp, "Claude")
+        let sample = reader.sample()
+        XCTAssertTrue(sample.probeFinished)
+        XCTAssertEqual(sample.traffic.activeCount, 1)
+        XCTAssertEqual(sample.traffic.primaryApp, "Claude")
+    }
+
+    func testFinishedEmptyLsofIsAnEmptyLink() {
+        let reader = ProcessTrafficReader(
+            lsofOutput: { .finished("") },
+            nettopOutput: { .finished("") }
+        )
+        let sample = reader.sample()
+        XCTAssertTrue(sample.probeFinished)
+        XCTAssertTrue(sample.traffic.flows.isEmpty)
+    }
+
+    func testFailedLsofIsNotAnEmptyLink() {
+        let reader = ProcessTrafficReader(
+            lsofOutput: { .failed },
+            nettopOutput: { .finished(",bytes_in,bytes_out,\nClaude.1,100,20,") }
+        )
+        let sample = reader.sample()
+        XCTAssertFalse(sample.probeFinished)
+        XCTAssertTrue(sample.traffic.flows.isEmpty)
+        XCTAssertTrue(sample.totals.isEmpty)
     }
 }
 
 final class AIBriefTests: XCTestCase {
     func testNoAIApps() {
-        let copy = AIBrief.ruleBased(AIBriefContext(traffic: .empty))
-        XCTAssertEqual(copy, "No AI apps on the link.")
+        let diagnosis = AIBrief.diagnose(AIBriefContext(traffic: .empty))
+        XCTAssertEqual(diagnosis.kind, .idle)
+        XCTAssertEqual(diagnosis.reason, "No AI apps on the link.")
+    }
+
+    func testUnfinishedProbeIsNotQuiet() {
+        let diagnosis = AIBrief.diagnose(AIBriefContext(traffic: .empty, probeFinished: false))
+        XCTAssertEqual(diagnosis.kind, .unreadable)
+        XCTAssertEqual(diagnosis.title, "Couldn't read the link")
+        XCTAssertFalse(diagnosis.reason.contains("No AI apps"))
     }
 
     func testOfflineAndDisconnected() {
         XCTAssertEqual(
             AIBrief.diagnose(AIBriefContext(powerOn: false, traffic: AITrafficSnapshot(flows: [AIFlow(app: "Cursor")]))).kind,
+            .offline
+        )
+        XCTAssertEqual(
+            AIBrief.diagnose(AIBriefContext(powerOn: false, probeFinished: false)).kind,
             .offline
         )
         XCTAssertEqual(
@@ -225,13 +259,5 @@ final class AIBriefTests: XCTestCase {
         XCTAssertTrue(AIBrief.isDownloadRising(current: 3, history: [0.4, 0.5, 0.4]))
         XCTAssertFalse(AIBrief.isDownloadRising(current: 0.8, history: [0.4, 0.5]))
         XCTAssertFalse(AIBrief.isDownloadRising(current: 2.1, history: [2.0, 2.2, 2.1]))
-    }
-
-    func testCacheKeyStableForSameFacts() {
-        let context = AIBriefContext(quality: .good, latencyMs: 40, downloadMbps: 1.2, traffic: AITrafficSnapshot(flows: [AIFlow(app: "Cursor")]))
-        XCTAssertEqual(AIBrief.cacheKey(context), AIBrief.cacheKey(context))
-        var changed = context
-        changed.downloadRising = true
-        XCTAssertNotEqual(AIBrief.cacheKey(context), AIBrief.cacheKey(changed))
     }
 }
