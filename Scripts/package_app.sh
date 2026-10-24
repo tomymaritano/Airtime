@@ -75,7 +75,8 @@ embed_widgets() {
       CURRENT_PROJECT_VERSION="$VERSION" \
       CODE_SIGN_IDENTITY="-" \
       CODE_SIGNING_REQUIRED=NO \
-      CODE_SIGNING_ALLOWED=YES \
+      CODE_SIGNING_ALLOWED=NO \
+      CODE_SIGN_STYLE=Manual \
       ONLY_ACTIVE_ARCH="$only_active" \
       build
   then
@@ -110,16 +111,18 @@ signing_identity() {
 
 sign_app() {
   local identity="$1"
-  local extra=()
+  # Keep at least one element. bash 3.2 with set -u treats an empty "${array[@]}" as unbound.
+  local -a args
+  args=(--force --sign "$identity")
   if [[ "$identity" != "-" ]]; then
-    extra+=(--options runtime --timestamp)
+    args+=(--options runtime --timestamp)
   fi
   if [[ -d "$CONTENTS/PlugIns/DevWifiBarWidgets.appex" ]]; then
-    codesign --force "${extra[@]}" --entitlements "$WIDGET_ENTITLEMENTS" --sign "$identity" \
+    codesign "${args[@]}" --entitlements "$WIDGET_ENTITLEMENTS" \
       "$CONTENTS/PlugIns/DevWifiBarWidgets.appex"
-    codesign --force "${extra[@]}" --entitlements "$APP_ENTITLEMENTS" --sign "$identity" "$APP"
+    codesign "${args[@]}" --entitlements "$APP_ENTITLEMENTS" "$APP"
   else
-    codesign --force --deep "${extra[@]}" --entitlements "$APP_ENTITLEMENTS" --sign "$identity" "$APP"
+    codesign --deep "${args[@]}" --entitlements "$APP_ENTITLEMENTS" "$APP"
   fi
 }
 
