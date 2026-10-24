@@ -8,7 +8,7 @@ struct RadarWidget: Widget {
             RadarWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Radar")
+        .configurationDisplayName("\(ProductName.display) Radar")
         .description("Whether lag is Wi-Fi or an LLM on the uplink.")
         .supportedFamilies([.systemMedium])
     }
@@ -24,7 +24,7 @@ struct RadarWidgetView: View {
                     Text(app)
                         .font(.system(size: 13, weight: .semibold))
                 } else {
-                    Text("Open DevWifiBar")
+                    Text(ProductName.openPrompt)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(WidgetTheme.secondary)
                 }

@@ -8,7 +8,7 @@ cd "$ROOT"
 source "$ROOT/version.env"
 
 DIST="$ROOT/dist"
-APP="$DIST/DevWifiBar.app"
+APP="$DIST/Airtime.app"
 CONTENTS="$APP/Contents"
 MACOS_DIR="$CONTENTS/MacOS"
 APP_ENTITLEMENTS="$ROOT/Sources/DevWifiBar/DevWifiBar.entitlements"
@@ -159,7 +159,7 @@ else
   sign_app "-"
 fi
 
-ZIP="$DIST/DevWifiBar-${VERSION}.zip"
+ZIP="$DIST/Airtime-${VERSION}.zip"
 ditto -c -k --keepParent "$APP" "$ZIP"
 
 if [[ -n "$IDENTITY" && "$IDENTITY" != "-" ]] && can_notarize; then

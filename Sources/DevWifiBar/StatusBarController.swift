@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import DevWifiCore
 import SwiftUI
 
 @MainActor
@@ -35,7 +36,7 @@ final class StatusBarController: NSObject {
         button.image = BrandMark.menuBarImage(for: state.snapshot)
         button.imagePosition = .imageOnly
         button.imageScaling = .scaleProportionallyDown
-        button.toolTip = "DevWifiBar"
+        button.toolTip = ProductName.display
         button.target = self
         button.action = #selector(togglePopover)
         button.sendAction(on: [.leftMouseUp])
@@ -48,8 +49,8 @@ final class StatusBarController: NSObject {
                 guard let button = self?.statusItem.button else { return }
                 button.image = BrandMark.menuBarImage(for: snapshot)
                 button.toolTip = traffic.activeCount > 0
-                    ? "DevWifiBar · \(traffic.activeCount) AI on link"
-                    : "DevWifiBar"
+                    ? "\(ProductName.display) · \(traffic.activeCount) AI on link"
+                    : ProductName.display
             }
             .store(in: &cancellables)
     }

@@ -28,10 +28,10 @@ jobs:
       - name: Package app
         run: ./Scripts/package_app.sh
 
-      - name: Upload DevWifiBar.app
+      - name: Upload Airtime.app
         uses: actions/upload-artifact@v4
         with:
-          name: DevWifiBar
+          name: Airtime
           path: |
-            dist/DevWifiBar.app
-            dist/DevWifiBar-*.zip
+            dist/Airtime.app
+            dist/Airtime-*.zip

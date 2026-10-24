@@ -8,7 +8,7 @@ struct NetworkWidget: Widget {
             NetworkWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Network")
+        .configurationDisplayName("\(ProductName.display) Network")
         .description("IP, gateway, DNS, and latency.")
         .supportedFamilies([.systemMedium])
     }

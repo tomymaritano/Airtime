@@ -8,7 +8,7 @@ struct CombinedWidget: Widget {
             CombinedWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Combined")
+        .configurationDisplayName("\(ProductName.display) Combined")
         .description("Signal, traffic, and ping in one block.")
         .supportedFamilies([.systemMedium])
     }

@@ -8,7 +8,7 @@ struct LatencyWidget: Widget {
             LatencyWidgetView(snapshot: entry.snapshot)
                 .containerBackground(for: .widget) { WidgetTheme.background }
         }
-        .configurationDisplayName("DevWifiBar Latency")
+        .configurationDisplayName("\(ProductName.display) Latency")
         .description("Ping sparkline to 1.1.1.1.")
         .supportedFamilies([.systemSmall])
     }

@@ -2,7 +2,7 @@ import AppKit
 import DevWifiCore
 import SwiftUI
 
-/// Wi-Fi fan on a bar — the DevWifiBar mark. Template so it matches the menu bar.
+/// Wi-Fi fan on a bar — the Airtime mark. Template so it matches the menu bar.
 enum BrandMark {
     static let menuBarPointSize: CGFloat = 18
 
