@@ -147,7 +147,7 @@ widget and its card are the same design at two sizes.
 
 | Widget   | Becomes                                                                       |
 | -------- | ----------------------------------------------------------------------------- |
-| Signal   | `SignalMeter` 5 segments, quality 15pt in `color(for:)`, mono RSSI 12pt, channel/rate pair 12pt |
+| Signal   | `SignalMeter` 5 segments, quality 15pt in `color(for:)`, channel/RSSI pair 12pt |
 | Metric   | RSSI 22pt in `color(for:)`, quality 13pt trailing                             |
 | Latency  | value 22pt in `color(forLatency:)`, line sparkline `peak: max(max, 60)`, hairline |
 | Traffic  | two series in a `ZStack` on a shared peak — RX `down`, TX `load`              |
@@ -158,6 +158,12 @@ widget and its card are the same design at two sizes.
 `uploadHistory` and `diagnosisKind` already travel in `WidgetSnapshot` and are
 currently ignored. Most of this redesign spends information the app already
 pays for.
+
+The Signal widget is the one place the *content* differs, not just the size:
+the panel pairs Channel with Radio rate, but `WidgetSnapshot` does not carry
+`transmitRateMbps`, so the widget pairs Channel with RSSI. The field is not
+added — the snapshot's stored shape is frozen by the App Group constraint
+above.
 
 Type sizes differ from the matching panel card where the family demands it. A
 `systemSmall` widget is about 170pt wide, so Signal drops the panel's 17pt
