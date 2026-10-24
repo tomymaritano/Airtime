@@ -29,7 +29,7 @@ struct CombinedWidgetView: View {
                         .foregroundStyle(Theme.down)
                     Spacer(minLength: 4)
                     Text("\u{2191} \(Format.mbps(snapshot.uploadMbps))")
-                        .foregroundStyle(snapshot.uploadMbps >= AIBrief.saturateMbps ? Theme.load : .primary)
+                        .foregroundStyle(Theme.color(forUpload: snapshot.uploadMbps))
                     Spacer(minLength: 4)
                     Text(Format.latency(snapshot.latencyMs))
                         .foregroundStyle(Theme.color(forLatency: snapshot.latencyMs))

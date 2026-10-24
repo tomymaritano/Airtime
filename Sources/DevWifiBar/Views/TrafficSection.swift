@@ -48,6 +48,6 @@ struct TrafficSection: View {
     }
 
     private var uploadColor: Color {
-        snapshot.uploadMbps >= AIBrief.saturateMbps ? Theme.load : .primary
+        Theme.color(forUpload: snapshot.uploadMbps)
     }
 }

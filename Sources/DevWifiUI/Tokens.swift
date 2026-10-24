@@ -54,6 +54,11 @@ public enum Theme {
         return ms >= AIBrief.latencyHighMs ? load : ok
     }
 
+    /// Upload over the line. `.primary` below the threshold: not saturated is not news.
+    public static func color(forUpload mbps: Double) -> Color {
+        mbps >= AIBrief.saturateMbps ? load : .primary
+    }
+
     public static func color(for kind: AIDiagnosisKind) -> Color {
         switch kind {
         case .saturated, .uplinkLag: return load
