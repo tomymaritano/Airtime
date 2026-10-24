@@ -37,7 +37,11 @@ struct CombinedWidgetView: View {
                 .font(.system(size: 12, weight: .medium).monospacedDigit())
                 .lineLimit(1)
 
-                SparklineView(values: snapshot.downloadHistory, color: Theme.down)
+                SparklineView(
+                    values: snapshot.downloadHistory,
+                    color: Theme.down,
+                    peak: max(snapshot.downloadHistory.max() ?? 0, AIBrief.saturateMbps)
+                )
                     .frame(height: 30)
                     .overlay(alignment: .bottom) {
                         Rectangle().fill(Theme.divider).frame(height: 1)
