@@ -8,6 +8,7 @@ let package = Package(
     ],
     products: [
         .library(name: "DevWifiCore", targets: ["DevWifiCore"]),
+        .library(name: "DevWifiUI", targets: ["DevWifiUI"]),
         .executable(name: "DevWifiBar", targets: ["DevWifiBar"]),
     ],
     targets: [
@@ -17,9 +18,16 @@ let package = Package(
                 .enableUpcomingFeature("StrictConcurrency"),
             ]
         ),
+        .target(
+            name: "DevWifiUI",
+            dependencies: ["DevWifiCore"],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency"),
+            ]
+        ),
         .executableTarget(
             name: "DevWifiBar",
-            dependencies: ["DevWifiCore"],
+            dependencies: ["DevWifiCore", "DevWifiUI"],
             exclude: ["Info.plist", "DevWifiBar.entitlements"],
             resources: [
                 .process("Resources"),
