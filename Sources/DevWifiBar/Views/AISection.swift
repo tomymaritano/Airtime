@@ -52,7 +52,7 @@ struct AISection: View {
                             flow: flow,
                             hasBandwidth: traffic.hasBandwidth,
                             share: share(of: flow),
-                            barColor: diagnosis.kind == .saturated ? Theme.load : Color(white: 0.56),
+                            barColor: diagnosis.kind == .saturated ? Theme.load : Theme.secondary,
                             selected: flow.app == selectedApp,
                             action: { selectedApp = flow.app }
                         )
