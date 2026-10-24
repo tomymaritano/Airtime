@@ -22,4 +22,18 @@ final class SignalTests: XCTestCase {
         XCTAssertEqual(rssiToPercent(-10), 1, accuracy: 0.001)
         XCTAssertEqual(rssiToPercent(-120), 0, accuracy: 0.001)
     }
+
+    func testSegmentsPerQuality() {
+        XCTAssertEqual(SignalQuality.excellent.segments, 5)
+        XCTAssertEqual(SignalQuality.good.segments, 4)
+        XCTAssertEqual(SignalQuality.fair.segments, 3)
+        XCTAssertEqual(SignalQuality.weak.segments, 2)
+        XCTAssertEqual(SignalQuality.veryWeak.segments, 1)
+    }
+
+    func testSegmentsCoverEveryCase() {
+        for quality in SignalQuality.allCases {
+            XCTAssertTrue((1...5).contains(quality.segments), "\(quality) is outside 1...5")
+        }
+    }
 }

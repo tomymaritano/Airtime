@@ -12,6 +12,18 @@ final class PanelWidgetTests: XCTestCase {
         XCTAssertEqual(result.order, [.radar, .signal, .traffic, .network, .latency, .metric, .combined])
         XCTAssertEqual(result.hidden, [.latency, .signal, .metric, .combined])
     }
+
+    func testSignalQualityReadsBackFromRawValue() {
+        for quality in SignalQuality.allCases {
+            let snapshot = WidgetSnapshot(quality: quality.rawValue)
+            XCTAssertEqual(snapshot.signalQuality, quality)
+        }
+    }
+
+    func testSignalQualityIsNilWhenUnknownOrAbsent() {
+        XCTAssertNil(WidgetSnapshot(quality: nil).signalQuality)
+        XCTAssertNil(WidgetSnapshot(quality: "Superb").signalQuality)
+    }
 }
 
 final class WidgetSnapshotTests: XCTestCase {

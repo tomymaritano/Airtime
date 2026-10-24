@@ -16,6 +16,19 @@ public enum SignalQuality: String, Sendable, Equatable, CaseIterable {
     }
 }
 
+extension SignalQuality {
+    /// Lit segments in the five-step meter.
+    public var segments: Int {
+        switch self {
+        case .excellent: return 5
+        case .good: return 4
+        case .fair: return 3
+        case .weak: return 2
+        case .veryWeak: return 1
+        }
+    }
+}
+
 /// Map RSSI to 0...1. −30 dBm is 100%, −90 dBm is 0%.
 public func rssiToPercent(_ dbm: Int) -> Double {
     let clamped = min(max(dbm, -90), -30)
