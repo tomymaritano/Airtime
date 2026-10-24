@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct WidgetPickerView: View {
@@ -20,7 +21,7 @@ struct WidgetPickerView: View {
                 Button("OK", action: onDone)
                     .buttonStyle(.plain)
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Theme.teal)
+                    .foregroundStyle(Theme.ok)
             }
             .padding(.horizontal, 14)
             .padding(.top, 12)
@@ -60,7 +61,7 @@ struct WidgetPickerView: View {
                     .background(Color.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(added ? Theme.teal.opacity(0.7) : Color.white.opacity(0.06), lineWidth: added ? 1.5 : 1)
+                            .strokeBorder(added ? Theme.ok.opacity(0.7) : Color.white.opacity(0.06), lineWidth: added ? 1.5 : 1)
                     )
 
                 HStack(alignment: .firstTextBaseline) {
@@ -75,7 +76,7 @@ struct WidgetPickerView: View {
                     Spacer(minLength: 8)
                     Text(added ? "Added" : "Add")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(added ? Theme.teal : Theme.secondary)
+                        .foregroundStyle(added ? Theme.ok : Theme.secondary)
                 }
             }
         }

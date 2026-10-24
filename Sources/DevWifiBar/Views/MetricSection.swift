@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 /// Compact density — one number, like CodexBar Metric.
@@ -20,7 +21,7 @@ struct MetricSection: View {
 
             Text(Format.rssi(wifi.rssi))
                 .font(.system(size: 22, weight: .semibold).monospacedDigit())
-                .foregroundStyle(Theme.teal)
+                .foregroundStyle(Theme.ok)
 
             Text(wifi.quality?.rawValue ?? "No signal")
                 .font(.system(size: 11, weight: .semibold))

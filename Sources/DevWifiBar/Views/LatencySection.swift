@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct LatencySection: View {
@@ -28,8 +29,8 @@ struct LatencySection: View {
 
     private var barColor: Color {
         guard let latencyMs else { return Color.white.opacity(0.35) }
-        if latencyMs >= AIBrief.latencyHighMs { return Theme.teal }
+        if latencyMs >= AIBrief.latencyHighMs { return Theme.ok }
         if latencyMs >= AIBrief.latencyClearMs { return .orange }
-        return Theme.teal
+        return Theme.ok
     }
 }

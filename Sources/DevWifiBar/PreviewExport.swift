@@ -1,4 +1,5 @@
 import AppKit
+import DevWifiUI
 import SwiftUI
 
 @MainActor
@@ -24,7 +25,7 @@ enum PreviewExport {
             .environmentObject(state)
         write(panel, to: directory.appendingPathComponent("panel.png"), scale: 2)
 
-        let mark = BrandMarkView(color: Theme.teal)
+        let mark = BrandMarkView(color: Theme.ok)
             .frame(width: 128, height: 128)
             .padding(24)
             .background(Theme.background)

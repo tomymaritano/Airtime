@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct SignalSection: View {
@@ -39,7 +40,7 @@ struct SignalSection: View {
 
     private var barColor: Color {
         switch wifi.quality {
-        case .excellent, .good: return Theme.teal
+        case .excellent, .good: return Theme.ok
         case .fair: return .orange
         case .weak, .veryWeak: return .red
         case nil: return Color.white.opacity(0.25)

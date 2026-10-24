@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct TrafficSection: View {
@@ -12,7 +13,7 @@ struct TrafficSection: View {
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Theme.secondary)
 
-            SparklineView(values: downloadHistory, color: Theme.teal)
+            SparklineView(values: downloadHistory, color: Theme.down)
                 .frame(height: 28)
 
             HStack {

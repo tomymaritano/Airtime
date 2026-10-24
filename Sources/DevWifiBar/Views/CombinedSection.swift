@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 /// Dense density — signal + traffic + ping in one block.
@@ -16,13 +17,13 @@ struct CombinedSection: View {
                 if let quality = snapshot.wifi.quality {
                     Text(quality.rawValue)
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(Theme.teal)
+                        .foregroundStyle(Theme.ok)
                 }
             }
 
-            ProgressBar(progress: snapshot.wifi.qualityPercent, color: Theme.teal)
+            ProgressBar(progress: snapshot.wifi.qualityPercent, color: Theme.ok)
 
-            SparklineView(values: downloadHistory, color: Theme.teal)
+            SparklineView(values: downloadHistory, color: Theme.down)
                 .frame(height: 22)
 
             HStack {

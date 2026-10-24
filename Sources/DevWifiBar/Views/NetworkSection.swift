@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct NetworkSection: View {
@@ -35,7 +36,7 @@ struct NetworkSection: View {
             Spacer()
             Text(copiedField == field ? "Copied" : value)
                 .monospacedDigit()
-                .foregroundStyle(copiedField == field ? Theme.teal : .primary)
+                .foregroundStyle(copiedField == field ? Theme.ok : .primary)
         }
         .font(.system(size: 11))
         .contentShape(Rectangle())

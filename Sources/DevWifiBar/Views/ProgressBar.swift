@@ -1,8 +1,9 @@
+import DevWifiUI
 import SwiftUI
 
 struct ProgressBar: View {
     let progress: Double
-    var color: Color = Theme.teal
+    var color: Color = Theme.ok
 
     var body: some View {
         GeometryReader { geo in

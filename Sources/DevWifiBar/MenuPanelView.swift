@@ -1,5 +1,6 @@
 import AppKit
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct MenuPanelView: View {
@@ -13,7 +14,7 @@ struct MenuPanelView: View {
                 WidgetPickerView(layout: layout) {
                     editingWidgets = false
                 }
-                .environmentObject(state)
+                .environment(\.colorScheme, .dark)
             } else {
                 panel
             }
@@ -21,34 +22,25 @@ struct MenuPanelView: View {
     }
 
     private var panel: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: Theme.cardSpacing) {
             HeaderView(snapshot: state.snapshot)
-                .padding(.horizontal, 14)
-                .padding(.top, 12)
-                .padding(.bottom, 10)
 
             ForEach(layout.visible) { widget in
-                divider
                 widgetView(widget)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
             }
-
-            divider
 
             FooterView(
                 launchAtLogin: $state.launchAtLoginEnabled,
                 canManageLogin: LaunchAtLogin.isBundled,
-                onLaunchAtLogin: state.toggleLaunchAtLogin,
+                onLaunchAtLogin: { state.toggleLaunchAtLogin($0) },
                 onWidgets: { editingWidgets = true },
                 onQuit: { NSApplication.shared.terminate(nil) }
             )
-            .padding(.horizontal, 14)
-            .padding(.top, 8)
-            .padding(.bottom, 10)
         }
+        .padding(Theme.panelPadding)
         .frame(width: Theme.panelWidth)
         .background(Theme.background)
+        .environment(\.colorScheme, .dark)
     }
 
     @ViewBuilder
@@ -63,12 +55,16 @@ struct MenuPanelView: View {
                 uploadHistory: state.uploadHistory
             )
         case .radar:
-            AISection(traffic: state.aiTraffic, diagnosis: state.aiDiagnosis, selectedApp: $state.selectedAIApp)
+            AISection(
+                traffic: state.aiTraffic,
+                diagnosis: state.aiDiagnosis,
+                selectedApp: $state.selectedAIApp
+            )
         case .network:
             NetworkSection(
                 snapshot: state.snapshot,
                 copiedField: state.copiedField,
-                onCopy: state.copy
+                onCopy: { value, field in state.copy(value, field: field) }
             )
         case .latency:
             LatencySection(latencyMs: state.snapshot.latencyMs, history: state.latencyHistory)
@@ -77,11 +73,5 @@ struct MenuPanelView: View {
         case .combined:
             CombinedSection(snapshot: state.snapshot, downloadHistory: state.downloadHistory)
         }
-    }
-
-    private var divider: some View {
-        Rectangle()
-            .fill(Theme.divider)
-            .frame(height: 1)
     }
 }

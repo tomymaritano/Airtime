@@ -1,4 +1,5 @@
 import DevWifiCore
+import DevWifiUI
 import SwiftUI
 
 struct AISection: View {
@@ -13,7 +14,7 @@ struct AISection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
-                BrandMarkView(color: Theme.teal)
+                BrandMarkView(color: Theme.ok)
                     .frame(width: 14, height: 14)
                 Text("On the link")
                     .font(.system(size: 11, weight: .semibold))
@@ -22,11 +23,11 @@ struct AISection: View {
                 if traffic.activeCount > 0 {
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(Theme.teal)
+                            .fill(Theme.ok)
                             .frame(width: 6, height: 6)
                         Text("\(traffic.activeCount) live")
                             .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(Theme.teal)
+                            .foregroundStyle(Theme.ok)
                     }
                 }
             }
@@ -72,13 +73,13 @@ struct AISection: View {
                 .foregroundStyle(Theme.secondary)
             Text(item.value)
                 .font(.system(size: 11, weight: .semibold).monospacedDigit())
-                .foregroundStyle(item.tripped ? Theme.teal : .primary)
+                .foregroundStyle(item.tripped ? Theme.load : .primary)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            item.tripped ? Theme.teal.opacity(0.12) : Color.white.opacity(0.04),
+            item.tripped ? Theme.load.opacity(0.12) : Color.white.opacity(0.04),
             in: RoundedRectangle(cornerRadius: 8, style: .continuous)
         )
     }
@@ -99,7 +100,7 @@ private struct AIAppChip: View {
                     .font(.system(size: 11, weight: .semibold))
                 if flow.isStreaming {
                     Circle()
-                        .fill(Theme.teal)
+                        .fill(Theme.down)
                         .frame(width: 5, height: 5)
                 }
             }
@@ -136,7 +137,7 @@ private struct AIAppDetail: View {
                 Text(diagnosis.title.uppercased())
                     .font(.system(size: 9, weight: .bold))
                     .tracking(0.4)
-                    .foregroundStyle(diagnosis.kind == .saturated || diagnosis.kind == .streaming ? Theme.teal : Theme.secondary)
+                    .foregroundStyle(diagnosis.kind == .saturated || diagnosis.kind == .streaming ? Theme.load : Theme.secondary)
             }
 
             Text(diagnosis.reason)
@@ -153,14 +154,14 @@ private struct AIAppDetail: View {
 enum AIAppStyle {
     static func color(for app: String) -> Color {
         switch app {
-        case "Cursor": return Theme.teal
+        case "Cursor": return Theme.down
         case "Claude": return Color(red: 0.86, green: 0.52, blue: 0.32)
         case "Grok": return Color.white.opacity(0.85)
         case "ChatGPT", "OpenAI": return Color(red: 0.29, green: 0.78, blue: 0.55)
         case "Copilot": return Color(red: 0.35, green: 0.62, blue: 0.98)
         case "Gemini": return Color(red: 0.47, green: 0.62, blue: 0.98)
         case "Windsurf": return Color(red: 0.40, green: 0.78, blue: 0.88)
-        default: return Theme.teal
+        default: return Theme.down
         }
     }
 }

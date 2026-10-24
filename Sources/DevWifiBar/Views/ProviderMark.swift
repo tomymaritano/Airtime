@@ -1,4 +1,5 @@
 import AppKit
+import DevWifiUI
 import SwiftUI
 
 /// Official Simple Icons marks, loaded from bundled SVGs/PNGs — not hand-drawn paths.
