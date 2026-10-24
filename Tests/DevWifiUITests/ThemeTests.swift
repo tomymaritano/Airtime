@@ -60,11 +60,12 @@ final class ThemeTests: XCTestCase {
 
     // MARK: - Diagnosis kind
 
-    /// `AIDiagnosisKind` isn't `CaseIterable`, so exhaustiveness is enforced
-    /// by the compiler instead: this switch has no `default`, so adding a new
-    /// case to the enum fails this file to compile until it's handled here.
+    /// Exhaustive over `AIDiagnosisKind.allCases` so a new case can't slip
+    /// through untested. The switch has no `default`, so adding a new case to
+    /// the enum forces it to be handled here before compilation succeeds.
     func testDiagnosisKindMapsEveryCase() {
-        for kind: AIDiagnosisKind in [.saturated, .uplinkLag, .streaming, .live, .idle, .unreadable, .offline, .disconnected] {
+        XCTAssertEqual(AIDiagnosisKind.allCases.count, 8, "a case was added; confirm its colour is intentional")
+        for kind in AIDiagnosisKind.allCases {
             let expected: Color
             switch kind {
             case .saturated, .uplinkLag: expected = Theme.load

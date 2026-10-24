@@ -37,7 +37,7 @@ public struct AIBriefContext: Equatable, Sendable {
     public var throughputMbps: Double { downloadMbps + uploadMbps }
 }
 
-public enum AIDiagnosisKind: String, Sendable, Equatable, Codable {
+public enum AIDiagnosisKind: String, Sendable, Equatable, Codable, CaseIterable {
     case offline
     case disconnected
     case unreadable
