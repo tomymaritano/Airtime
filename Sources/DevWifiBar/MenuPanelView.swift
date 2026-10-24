@@ -58,6 +58,7 @@ struct MenuPanelView: View {
             AISection(
                 traffic: state.aiTraffic,
                 diagnosis: state.aiDiagnosis,
+                quality: state.snapshot.wifi.quality,
                 selectedApp: $state.selectedAIApp
             )
         case .network:

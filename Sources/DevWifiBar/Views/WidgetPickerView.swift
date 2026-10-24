@@ -102,7 +102,7 @@ struct WidgetPickerView: View {
         case .latency:
             LatencySection(latencyMs: state.snapshot.latencyMs, history: state.latencyHistory)
         case .radar:
-            AISection(traffic: state.aiTraffic, diagnosis: state.aiDiagnosis, selectedApp: $state.selectedAIApp)
+            AISection(traffic: state.aiTraffic, diagnosis: state.aiDiagnosis, quality: state.snapshot.wifi.quality, selectedApp: $state.selectedAIApp)
         case .network:
             NetworkSection(snapshot: state.snapshot, copiedField: nil, onCopy: { _, _ in })
         }

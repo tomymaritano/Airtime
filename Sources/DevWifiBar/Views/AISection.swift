@@ -2,33 +2,22 @@ import DevWifiCore
 import DevWifiUI
 import SwiftUI
 
+/// "On the link": the verdict, its three chips, and the AI apps using the link.
 struct AISection: View {
     let traffic: AITrafficSnapshot
     let diagnosis: AIDiagnosis
+    let quality: SignalQuality?
     @Binding var selectedApp: String?
-
-    private var selected: AIFlow? {
-        traffic.topFlows.first(where: { $0.app == selectedApp }) ?? traffic.topFlows.first
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
-                BrandMarkView(color: Theme.ok)
-                    .frame(width: 14, height: 14)
-                Text("On the link")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Theme.secondary)
+            HStack {
+                CardTitle(text: "On the link")
                 Spacer()
                 if traffic.activeCount > 0 {
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(Theme.ok)
-                            .frame(width: 6, height: 6)
-                        Text("\(traffic.activeCount) live")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundStyle(Theme.ok)
-                    }
+                    Text("\(traffic.activeCount) live")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Theme.secondary)
                 }
             }
             .help("Process names and destinations only. No packet payloads.")
@@ -36,132 +25,110 @@ struct AISection: View {
             if !diagnosis.evidence.isEmpty {
                 HStack(spacing: 6) {
                     ForEach(diagnosis.evidence) { item in
-                        evidenceChip(item)
+                        EvidenceChip(label: item.label, value: item.value, tint: tint(for: item))
                     }
                 }
             }
 
-            if traffic.topFlows.isEmpty {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    StatusDot(color: Theme.color(for: diagnosis.kind))
+                    Text(diagnosis.title)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Theme.color(for: diagnosis.kind))
+                }
                 Text(diagnosis.reason)
-                    .font(.system(size: 12))
-                    .foregroundStyle(Theme.secondary)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(traffic.topFlows) { flow in
-                            AIAppChip(
-                                flow: flow,
-                                selected: flow.app == selected?.app,
-                                action: { selectedApp = flow.app }
-                            )
-                        }
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.body)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .accessibilityElement(children: .combine)
+
+            if !traffic.topFlows.isEmpty {
+                VStack(spacing: 8) {
+                    ForEach(traffic.topFlows) { flow in
+                        AIAppRow(
+                            flow: flow,
+                            hasBandwidth: traffic.hasBandwidth,
+                            share: share(of: flow),
+                            barColor: diagnosis.kind == .saturated ? Theme.load : Color(white: 0.56),
+                            selected: flow.app == selectedApp,
+                            action: { selectedApp = flow.app }
+                        )
                     }
                 }
-
-                if let selected {
-                    AIAppDetail(flow: selected, diagnosis: diagnosis)
+                .padding(.top, 10)
+                .overlay(alignment: .top) {
+                    Rectangle().fill(Theme.divider).frame(height: 1)
                 }
             }
+        }
+        .card()
+    }
+
+    /// Signal and Ping carry their own scales; anything else is only interesting when tripped.
+    private func tint(for item: AIEvidence) -> ChipTint {
+        switch item.label {
+        case "Signal":
+            return .semantic(Theme.color(for: quality))
+        case "Ping":
+            return .semantic(item.tripped ? Theme.load : Theme.ok)
+        default:
+            return item.tripped ? .semantic(Theme.load) : .neutral
         }
     }
 
-    private func evidenceChip(_ item: AIEvidence) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(item.label.uppercased())
-                .font(.system(size: 8, weight: .bold))
-                .tracking(0.4)
-                .foregroundStyle(Theme.secondary)
-            Text(item.value)
-                .font(.system(size: 11, weight: .semibold).monospacedDigit())
-                .foregroundStyle(item.tripped ? Theme.load : .primary)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            item.tripped ? Theme.load.opacity(0.12) : Color.white.opacity(0.04),
-            in: RoundedRectangle(cornerRadius: 8, style: .continuous)
-        )
+    /// Upload share, scaled so a lone small flow does not fill the bar.
+    private func share(of flow: AIFlow) -> Double {
+        let total = traffic.topFlows.reduce(0) { $0 + ($1.uploadMbps ?? 0) }
+        let scale = max(total, AIBrief.saturateMbps)
+        return min(max((flow.uploadMbps ?? 0) / scale, 0.03), 1)
     }
 }
 
-private struct AIAppChip: View {
+private struct AIAppRow: View {
     let flow: AIFlow
+    let hasBandwidth: Bool
+    let share: Double
+    let barColor: Color
     let selected: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 6) {
+            HStack(spacing: 10) {
                 ProviderMark(app: flow.app)
                     .frame(width: 14, height: 14)
                     .foregroundStyle(.primary)
-                Text(flow.app)
-                    .font(.system(size: 11, weight: .semibold))
-                if flow.isStreaming {
-                    Circle()
-                        .fill(Theme.down)
-                        .frame(width: 5, height: 5)
+                    .frame(width: 24, height: 24)
+                    .background(Color.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(flow.app)
+                            .font(.system(size: 13, weight: selected ? .semibold : .regular))
+                        Spacer(minLength: 8)
+                        Text(rate)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundStyle(Theme.body)
+                            .lineLimit(1)
+                    }
+                    if hasBandwidth {
+                        ShareBar(share: share, color: barColor)
+                    }
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(
-                selected ? AIAppStyle.color(for: flow.app).opacity(0.16) : Color.white.opacity(0.05),
-                in: RoundedRectangle(cornerRadius: 8, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(selected ? AIAppStyle.color(for: flow.app).opacity(0.55) : Color.white.opacity(0.06), lineWidth: 1)
-            )
-            .foregroundStyle(.primary)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(flow.app), \(flow.statusLabel)")
+        .accessibilityLabel("\(flow.app), \(rate)")
     }
-}
 
-private struct AIAppDetail: View {
-    let flow: AIFlow
-    let diagnosis: AIDiagnosis
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .center, spacing: 8) {
-                ProviderMark(app: flow.app)
-                    .frame(width: 16, height: 16)
-                    .foregroundStyle(.primary)
-                Text(flow.app)
-                    .font(.system(size: 13, weight: .semibold))
-                Spacer()
-                Text(diagnosis.title.uppercased())
-                    .font(.system(size: 9, weight: .bold))
-                    .tracking(0.4)
-                    .foregroundStyle(diagnosis.kind == .saturated || diagnosis.kind == .streaming ? Theme.load : Theme.secondary)
-            }
-
-            Text(diagnosis.reason)
-                .font(.system(size: 11))
-                .foregroundStyle(Theme.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-    }
-}
-
-enum AIAppStyle {
-    static func color(for app: String) -> Color {
-        switch app {
-        case "Cursor": return Theme.down
-        case "Claude": return Color(red: 0.86, green: 0.52, blue: 0.32)
-        case "Grok": return Color.white.opacity(0.85)
-        case "ChatGPT", "OpenAI": return Color(red: 0.29, green: 0.78, blue: 0.55)
-        case "Copilot": return Color(red: 0.35, green: 0.62, blue: 0.98)
-        case "Gemini": return Color(red: 0.47, green: 0.62, blue: 0.98)
-        case "Windsurf": return Color(red: 0.40, green: 0.78, blue: 0.88)
-        default: return Theme.down
-        }
+    private var rate: String {
+        guard hasBandwidth, flow.uploadMbps != nil || flow.downloadMbps != nil else { return flow.detail }
+        let up = String(format: "%.1f", flow.uploadMbps ?? 0)
+        let down = String(format: "%.1f", flow.downloadMbps ?? 0)
+        return "\(up) \u{2191}  \(down) \u{2193}"
     }
 }
