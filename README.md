@@ -15,7 +15,8 @@
 </p>
 
 ```bash
-brew install --cask tomymaritano/tap/airtime
+brew tap tomymaritano/airtime https://github.com/tomymaritano/Airtime
+brew install --cask airtime
 ```
 
 Native Swift. No Electron. No Dock icon. Same idea as the [`devwifi`](https://github.com/tomymaritano/devwifi) CLI — always visible, one click deep.
@@ -83,11 +84,12 @@ Homebrew ships v0.3.0 (Developer ID signed and notarized). Upgrade with `brew up
 ### Homebrew
 
 ```bash
-brew install --cask tomymaritano/tap/airtime
+brew tap tomymaritano/airtime https://github.com/tomymaritano/Airtime
+brew install --cask airtime
 open -a Airtime
 ```
 
-The cask lives in [`tomymaritano/homebrew-tap`](https://github.com/tomymaritano/homebrew-tap) because Airtime is not in the central cask repository yet. Upgrade with `brew upgrade --cask airtime`. `devwibar` is the old cask token; `brew upgrade` migrates it automatically.
+The cask lives in this repository under `Casks/`, which is tapped directly. The explicit URL is needed because Homebrew's one-argument shortcut assumes a repository named `homebrew-airtime`. Upgrade with `brew upgrade --cask airtime`. `devwibar` is the old cask token; `brew upgrade` migrates it automatically.
 
 Releases are Developer ID signed and notarized. Gatekeeper opens them without right-click → Open.
 

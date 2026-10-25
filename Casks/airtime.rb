@@ -1,3 +1,6 @@
+# This repository is itself the Homebrew tap (tomymaritano/airtime). This
+# file is what users install from directly, not a copy of something
+# maintained elsewhere.
 cask "airtime" do
   version "0.3.0"
   # Placeholder: the v0.3.0 asset does not exist yet, so no real checksum
