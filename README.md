@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/tomymaritano/devwibar/releases/latest"><img src="https://img.shields.io/github/v/release/tomymaritano/devwibar?style=flat-square" alt="Release"></a>
+  <a href="https://github.com/tomymaritano/Airtime/releases/latest"><img src="https://img.shields.io/github/v/release/tomymaritano/Airtime?style=flat-square" alt="Release"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-black?style=flat-square" alt="macOS 14+">
   <img src="https://img.shields.io/badge/Homebrew-cask-FBB040?style=flat-square" alt="Homebrew">
 </p>
 
 ```bash
-brew tap tomymaritano/tap
-brew install --cask devwibar
+brew tap tomymaritano/airtime https://github.com/tomymaritano/Airtime
+brew install --cask airtime
 ```
 
 Native Swift. No Electron. No Dock icon. Same idea as the [`devwifi`](https://github.com/tomymaritano/devwifi) CLI — always visible, one click deep.
@@ -77,19 +77,19 @@ macOS: right-click the desktop or open Notification Center → Edit Widgets → 
 
 System widgets refresh about every five minutes. Radar only appears after Airtime has written a snapshot (it will not run `lsof` inside the widget sandbox). If the gallery is empty, build with full Xcode so `package_app.sh` can embed `DevWifiBarWidgets.appex`.
 
-Homebrew ships v0.2.1 (Developer ID signed and notarized). Upgrade with `brew upgrade --cask devwibar`.
+Homebrew ships v0.3.0 (Developer ID signed and notarized). Upgrade with `brew upgrade --cask airtime`.
 
 ## Install
 
 ### Homebrew
 
 ```bash
-brew tap tomymaritano/tap
-brew install --cask devwibar
-open -a DevWifiBar
+brew tap tomymaritano/airtime https://github.com/tomymaritano/Airtime
+brew install --cask airtime
+open -a Airtime
 ```
 
-The cask lives in [`tomymaritano/homebrew-tap`](https://github.com/tomymaritano/homebrew-tap). Upgrade with `brew upgrade --cask devwibar`. v0.2.1 on the tap is still `DevWifiBar.app`. The next release installs as Airtime.
+The cask lives in this repository under `Casks/`, which is tapped directly. The explicit URL is needed because Homebrew's one-argument shortcut assumes a repository named `homebrew-airtime`. Upgrade with `brew upgrade --cask airtime`. `devwibar` is the old cask token; `brew upgrade` migrates it automatically.
 
 Releases are Developer ID signed and notarized. Gatekeeper opens them without right-click → Open.
 
@@ -98,8 +98,8 @@ Releases are Developer ID signed and notarized. Gatekeeper opens them without ri
 macOS 14+ and Swift 5.10+ (Xcode 15.4 or later).
 
 ```bash
-git clone https://github.com/tomymaritano/devwibar.git
-cd devwibar
+git clone https://github.com/tomymaritano/Airtime.git
+cd Airtime
 ./Scripts/package_app.sh
 open dist/Airtime.app
 ```
