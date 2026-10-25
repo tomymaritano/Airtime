@@ -1,16 +1,27 @@
-import DevWifiUI
 import SwiftUI
 
 /// A widget's whole surface is one card: mark, title, optional trailing label,
 /// then content. The dark background comes from `containerBackground` in each
 /// widget's configuration.
-struct WidgetCard<Content: View>: View {
+public struct WidgetCard<Content: View>: View {
     let title: String
     var trailing: String?
-    var offline: Bool = false
+    var offline: Bool
     @ViewBuilder var content: () -> Content
 
-    var body: some View {
+    public init(
+        title: String,
+        trailing: String? = nil,
+        offline: Bool = false,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.title = title
+        self.trailing = trailing
+        self.offline = offline
+        self.content = content
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 6) {
                 BrandMarkView(offline: offline, color: .primary)

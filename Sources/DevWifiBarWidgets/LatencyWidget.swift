@@ -14,27 +14,3 @@ struct LatencyWidget: Widget {
         .supportedFamilies([.systemSmall])
     }
 }
-
-struct LatencyWidgetView: View {
-    let snapshot: WidgetSnapshot
-
-    var body: some View {
-        WidgetCard(title: "Latency", trailing: "1.1.1.1", offline: !snapshot.powerOn) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(Format.latency(snapshot.latencyMs))
-                    .font(.system(size: 22, weight: .semibold).monospacedDigit())
-                    .foregroundStyle(Theme.color(forLatency: snapshot.latencyMs))
-
-                SparklineView(
-                    values: snapshot.latencyHistory,
-                    color: Theme.color(forLatency: snapshot.latencyMs),
-                    peak: max(snapshot.latencyHistory.max() ?? 0, 60)
-                )
-                .frame(height: 28)
-                .overlay(alignment: .bottom) {
-                    Rectangle().fill(Theme.divider).frame(height: 1)
-                }
-            }
-        }
-    }
-}

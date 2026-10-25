@@ -43,5 +43,12 @@ let package = Package(
                 .enableUpcomingFeature("StrictConcurrency"),
             ]
         ),
+        .testTarget(
+            name: "DevWifiUITests",
+            dependencies: ["DevWifiCore", "DevWifiUI"],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency"),
+            ]
+        ),
     ]
 )

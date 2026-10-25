@@ -12,7 +12,6 @@ final class AppState: ObservableObject {
     @Published private(set) var latencyHistory: [Double] = []
     @Published private(set) var aiTraffic = AITrafficSnapshot.empty
     @Published private(set) var aiDiagnosis = AIDiagnosis.empty
-    @Published var selectedAIApp: String?
     @Published var launchAtLoginEnabled = false
     @Published var copiedField: String?
 
@@ -161,7 +160,6 @@ final class AppState: ObservableObject {
                 let state = self
                 state?.probeFinished = sample.probeFinished
                 state?.aiTraffic = sample.traffic
-                state?.syncSelectedAIApp()
                 if !sample.totals.isEmpty {
                     state?.lastProcessBytes = sample.totals
                     state?.lastProcessBytesAt = Date()
@@ -189,14 +187,6 @@ final class AppState: ObservableObject {
                 topFlow: aiTraffic.topFlows.first
             )
         )
-    }
-
-    private func syncSelectedAIApp() {
-        let apps = Set(aiTraffic.flows.map(\.app))
-        if let selectedAIApp, apps.contains(selectedAIApp) {
-            return
-        }
-        selectedAIApp = aiTraffic.primaryApp
     }
 
     private func briefContext() -> AIBriefContext {
